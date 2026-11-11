@@ -428,8 +428,8 @@ function rekapBulan(bulan, kelas) {
 }
 function lapOut() {
   var L = S.lap;
-  if (L.tipe === 'individu') return '<div class="alert info">' + ic('straighten') + '<span>Ukuran kertas <b>F4 ' + ((S.srv.pengaturan || {}).paper_w || 215) + '×' + ((S.srv.pengaturan || {}).paper_h || 330) + ' mm</b></span></div>' + paperHtml(lapData(L.id, L.dari, L.sampai)) +
-    '<button class="btn cta" data-act="pdf">' + ic('picture_as_pdf') + 'Unduh Lembar PDF (F4)</button><div class="sp8"></div><button class="btn" data-act="kirimwali">' + ic('send') + 'Kirim ke Wali</button>';
+  if (L.tipe === 'individu') return '<div class="alert info">' + ic('straighten') + '<span>Ukuran kertas <b>A4 ' + ((S.srv.pengaturan || {}).paper_w || 210) + '×' + ((S.srv.pengaturan || {}).paper_h || 297) + ' mm</b></span></div>' + paperHtml(lapData(L.id, L.dari, L.sampai)) +
+    '<button class="btn cta" data-act="pdf">' + ic('picture_as_pdf') + 'Unduh Lembar PDF (A4)</button><div class="sp8"></div><button class="btn" data-act="kirimwali">' + ic('send') + 'Kirim ke Wali</button>';
   var rs = rekapBulan(L.bulan, L.kelas);
   return '<div class="tw"><table class="t"><thead><tr><th>Nama</th><th>Kelas</th><th>H</th><th>T</th><th>I</th><th>S</th><th>A</th><th>%</th><th>Bim</th></tr></thead><tbody>' + rs.map(function (r) { return '<tr><td>' + esc(r.s.nama) + '</td><td>' + esc(r.s.kelas) + '</td><td>' + r.hadir + '</td><td>' + r.terlambat + '</td><td>' + r.izin + '</td><td>' + r.sakit + '</td><td>' + r.alpa + '</td><td>' + (r.pct == null ? '—' : r.pct + '%') + '</td><td>' + r.bim + '</td></tr>'; }).join('') + '</tbody></table></div><div class="sp12"></div><button class="btn cta" data-act="csv">' + ic('table_view') + 'Rekap (.CSV)</button><p class="xs mut">Data presensi tersedia untuk ±100 hari terakhir.</p>';
 }
@@ -443,7 +443,7 @@ V.laporan = function () {
 var JSPDF = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 function makePDF(D) {
   return loadScript(JSPDF).then(function () {
-    var J = window.jspdf.jsPDF, P = S.srv.pengaturan || {}, W = P.paper_w || 215, H = P.paper_h || 330, m = 15, doc = new J({ unit: 'mm', format: [W, H] }), y = 18, mw = W - 2 * m;
+    var J = window.jspdf.jsPDF, P = S.srv.pengaturan || {}, W = P.paper_w || 210, H = P.paper_h || 297, m = 15, doc = new J({ unit: 'mm', format: [W, H] }), y = 18, mw = W - 2 * m;
     var need = function (h) { if (y + h > H - 15) { doc.addPage([W, H]); y = 18; } }, tx = function (t, x, o) { doc.text(String(t), x, y, o); };
     doc.setFont('helvetica', 'bold'); doc.setFontSize(13); tx(String(P.nama_lembaga || '').toUpperCase(), W / 2, { align: 'center' }); y += 5.5; doc.setFont('helvetica', 'normal'); doc.setFontSize(10); tx(P.nama_unit || '', W / 2, { align: 'center' }); y += 5; if (P.alamat_lembaga) { tx(P.alamat_lembaga, W / 2, { align: 'center' }); y += 5; }
     doc.setLineWidth(.6); doc.line(m, y, W - m, y); y += 8; doc.setFont('helvetica', 'bold'); doc.setFontSize(12); tx('LEMBAR PEMBINAAN SISWA', W / 2, { align: 'center' }); y += 5.5; doc.setFont('helvetica', 'normal'); doc.setFontSize(10); tx('Periode ' + fTgl(D.dari, 'mid') + ' s.d. ' + fTgl(D.sampai, 'mid'), W / 2, { align: 'center' }); y += 9;
